@@ -2,8 +2,8 @@
 
 const express=require('express');
 const User=require('../models/users.js') //Acqiring user model
-const signUpSchema=require('../middleware/joi')
-const loginSchema=require('../middleware/joi')
+const signUpSchema=require('../middleware/joi.js')
+const loginSchema=require('../middleware/joi.js')
 const router= new express.Router()
 
 

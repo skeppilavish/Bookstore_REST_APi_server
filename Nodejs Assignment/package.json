@@ -1,7 +1,7 @@
 {
   "name": "nodejs-assignment",
   "version": "1.0.0",
-  "description": "",
+  "description": "-> Collection of books with details ( titlke, author, genre, price, and stock available in store).",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,8 +14,9 @@
     "express": "^4.18.2",
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.1",
-    "mongoose": "^7.4.0",
-    "validator": "^13.9.0"
+    "mongoose": "^7.4.1",
+    "validator": "^13.9.0",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "jsdoc": "^4.0.2"

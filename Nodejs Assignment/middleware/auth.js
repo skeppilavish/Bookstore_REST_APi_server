@@ -3,6 +3,12 @@ const User = require('../models/users')
 
 
 //Creating auth function for authentication
+/**
+ * 
+ * @param {String} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
