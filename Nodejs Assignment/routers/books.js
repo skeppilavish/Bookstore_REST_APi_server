@@ -8,6 +8,16 @@ const router= new express.Router();
 const request= require("postman-request");
 const { bool, string } = require('joi');
 const logger= require('../models/log.js')
+const got = require('got')
+
+
+const Sentry = require('@sentry/node');
+Sentry.init({
+    release: process.env.VERSION,
+    environment: process.env.ENV,
+    dsn: "https://3b55aafdc6804d0b948ae2478917bccb@o201295.ingest.sentry.io/4505602112356352",
+    serverName: 'lavish_Book_Store'
+});
 
 // GET route for gettting all books in the bookstore(Admin and Customer)
 router.get('/books', async (req,res)=>{
@@ -22,11 +32,13 @@ router.get('/books', async (req,res)=>{
         const booksData = await Book.find().sort({title: 'asc'}).limit(limit).skip(limit*page);
         if(!booksData.length)
         {
+            logger.wwarn("No book is there")
             res.send("No books data found.");
         }
         res.send({booksData, "Page Number": page + 1, "Total Pages": pageCount});
     }
     catch(error){
+        Sentry.captureException(error)
         res.status(404).send("Invalid Request => " + error.message);
     }
 })
@@ -47,6 +59,7 @@ router.post('/books',auth,async (req,res)=>{
         await book.save()
         res.status(200).send(book)
     }catch(e){
+        Sentry.captureException(e.message)
         res.status(404).send(e.message)
     }
 })
@@ -68,6 +81,7 @@ router.get('/books/:id', async (req,res)=>{
         res.status(200).send(book)
     }catch(e){
         console.log(e)
+        Sentry.captureEvent("Fill correct id of book")
         res.status(404).send("Fill correct id of book")
         logger.warn(" in Get book by id", e.message)
     }
@@ -106,7 +120,7 @@ try{
     
     if(book===null )
     {
-
+        logger.warn("Book id is not there ")
         res.status(200).send("Wrong id")
     }
     else if(book.stock<=0){
@@ -174,7 +188,8 @@ try{
         }catch(e){
             book.stock=holded;
             // logger.error("Something went wrong. In catch of buy book Error: ", e)
-            console.log("last catch",e)
+            // console.log("last catch",e)
+            Sentry.captureException(e.message)
             res.status(400).send(e)
         
             }
@@ -182,10 +197,102 @@ try{
     catch(e)
     {
         //console.log("Error of id:", e.message)
-        logger.warn("Wrong book id", e)
+        //logger.warn("Wrong book id", e)
+        Sentry.captureException('Wrong book id')
         res.status(200).send("Wrong id of book")
     }
 })
+
+
+
+
+/// Using Got
+
+// router.post('/buy/book/:id', auth,async(req,res)=>{
+
+//     console.log("still on")
+// try{
+//     const book= await Book.findById(req.params.id)
+//     logger.info(book)
+    
+//     if(book===null )
+//     {
+
+//         res.status(200).send("Wrong id")
+//     }
+//     else if(book.stock<=0){
+//         logger.info("Not Available in stock")
+//         res.status(200).send("Book is not availabe in the stock")
+//     } 
+//     else{
+//         var holded=book.stock;
+//         logger.info("in buy book else condition")
+//         try{
+//             book.stock=book.stock-1; // book stock updated
+//             logger.info(" at line 117 done:", book.stock)
+            
+//             const options = {
+//                 url:"https://stoplight.io/mocks/skeps/book-store:master/12094368/misc/payment/process",
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json', // Set the appropriate Content-Type header for your API
+//                 },
+//                body:(JSON.stringify(req.body))
+//             };
+//             console.log("Entered by us:",req.body)
+//             console.log("2nd body you requested: ", options.body)
+//             //if(body!=req.body)
+//             // got.post(options).then(response => {
+//             //     res.send(response.body);
+//             //     logger.info("Payment done")
+//             //     })
+//             //     .catch(err => {
+//             //         logger.error("Wrong body or wrong api")
+//             //         console.log("idhar hai dikkkat:",err)
+//             //         res.send(err)}
+//             //         );
+//             const response= await got(options)
+//             //console.log("vhjvgjv", response.body)
+//                 if(!response.body)
+//                 {
+//                     console.log("response", response.body);
+//                     //console.log("ft")
+                    
+//                     logger.info("Wrong Details of card")
+//                     res.send("Fill correct Details")
+//                 }
+//                 else{
+//                         if(response.body===undefined)
+//                         {
+//                             logger.error("Not able to get body from api")
+//                         }
+//                         logger.info("Done")
+//                         // console.log("jhjh",body)// same to response.body
+//                         res.send(response.body)
+//                         logger.info("after complete transaction -> bookid:", book.id ,"and payment id:")
+//                         } 
+//                     console.log("to check stock beforeeee updating holder:", holded)
+//                     holded=book.stock;  
+//                     logger.info("to check stock after updating holder:", holded)
+//                     //await book.save()
+//                     logger.info("Saved")
+//             }
+//             catch(e){
+//             book.stock=holded;
+//             logger.error("Something went wrong. In catch of buy book Error: ", e)
+//             console.log("last catch",e)
+
+//             res.status(400).send(e)
+        
+//             }
+//         }}
+//     catch(e)
+//     {
+//         //console.log("Error of id:", e.message)
+//         logger.warn("Wrong book id", e)
+//         res.status(200).send("Wrong id of book")
+//     }
+// })
 
 
 //DELETE route for deleting a book(Only admin)
@@ -198,7 +305,8 @@ router.delete('/books/:id',auth,async(req,res)=>{
         const book= await Book.findByIdAndDelete(_id)
         res.status(200).send('Deleted Successfully.')
     }catch(e){
-        logger.error(e.message," at last step or line 187")
+        //logger.error(e.message," at last step or line 187")
+        Sentry.captureException(e.message)
         res.status(404).send(e.message)
     }
 })
