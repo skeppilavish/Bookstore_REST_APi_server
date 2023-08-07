@@ -40,8 +40,13 @@ To Know more Reach my GitHub Repository: https://github.com/skeppilavish/Booksto
    -> POST /books: Create a new book (only accessible to Admin users).
    -> PUT /books/:id: Update an existing book (only accessible to Admin users).
    -> DELETE /books/:id: Delete a book (only accessible to Admin users).
+   -> Buy book /buy/book/:id to buy a book with book id
 
 9. Implement error handling and provide meaningful error messages for invalid requests or authorization failures.
     Validate request bodies using JOI (17.9.2) to ensure required fields are present. 
+
+10. Used sentry to collect logs from the production .
+
+11. Used docker to run in virtual environment.
 
 -------Thank You :) ----------

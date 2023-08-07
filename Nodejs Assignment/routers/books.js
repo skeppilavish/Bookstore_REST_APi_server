@@ -6,18 +6,13 @@ const auth=require('../middleware/auth') //Acquiring auth
 const bookSchema=require('../middleware/joi')
 const router= new express.Router();
 const request= require("postman-request");
-const { bool, string } = require('joi');
+const { bool, string, required } = require('joi');
 const logger= require('../models/log.js')
-const got = require('got')
+const got = require('got');
+const { json } = require('body-parser');
 
 
-const Sentry = require('@sentry/node');
-Sentry.init({
-    release: process.env.VERSION,
-    environment: process.env.ENV,
-    dsn: "https://3b55aafdc6804d0b948ae2478917bccb@o201295.ingest.sentry.io/4505602112356352",
-    serverName: 'lavish_Book_Store'
-});
+const Sentry= require('../middleware/sentry.js')
 
 // GET route for gettting all books in the bookstore(Admin and Customer)
 router.get('/books', async (req,res)=>{
@@ -42,6 +37,26 @@ router.get('/books', async (req,res)=>{
         res.status(404).send("Invalid Request => " + error.message);
     }
 })
+
+
+// books print without query and page
+router.get('/books/all', async (req,res)=>{
+    
+    try{
+        const booksData = await Book.find().sort({title: 'asc'}).limit(3);
+        if(!booksData.length)
+        {
+            logger.warn("No book is there")
+            res.send("No books data found.");
+        }
+        res.send(booksData);
+    }
+    catch(error){
+        Sentry.captureException(error)
+        res.status(404).send("Invalid Request => " + error.message);
+    }
+})
+
 
 //POST route for adding books(Admin only)
 router.post('/books',auth,async (req,res)=>{
@@ -99,6 +114,7 @@ router.put('/books/:id',auth,async(req,res)=>{
         res.status(200).send('Updated Successfully.')
 
     }catch(e){
+        Sentry.captureException(e)
         res.status(404).send(e.message)
     }
 })
@@ -163,7 +179,8 @@ try{
                         //console.log("ft")
                         
                         logger.info("Wrong Details of card")
-                        res.send("Fill correct Details")
+                        console.log("from here")
+                        res.send({ "message": "Fill correct tails"})
                     }
                     // else if(response)
                     // {
@@ -189,7 +206,7 @@ try{
             book.stock=holded;
             // logger.error("Something went wrong. In catch of buy book Error: ", e)
             // console.log("last catch",e)
-            Sentry.captureException(e.message)
+            Sentry.captureException(Error, e.message)
             res.status(400).send(e)
         
             }
@@ -198,7 +215,7 @@ try{
     {
         //console.log("Error of id:", e.message)
         //logger.warn("Wrong book id", e)
-        Sentry.captureException('Wrong book id')
+        Sentry.captureException(Error)
         res.status(200).send("Wrong id of book")
     }
 })

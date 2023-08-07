@@ -39,7 +39,7 @@ router.post('/auth/login', async (req, res) => {
             'Time to login': user.createdAt
         })
     } catch (e) {
-        res.status(404).send("Fill Correct Details")
+        res.status(404).send({"message":"Fill Correct Details"})
     }
 })
 
