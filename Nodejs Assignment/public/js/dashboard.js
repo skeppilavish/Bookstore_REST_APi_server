@@ -3,7 +3,7 @@ const tableBody = document.getElementById('tablerows');
 
 console.log("Connected to Book Dashboard")
 
-document.addEventListener('click', async(event)=>{
+logout.addEventListener('click', async(event)=>{
     event.preventDefault(); // avoid refresh
     localStorage.clear();
     console.log("Token Removed Succesfully")
@@ -11,29 +11,40 @@ document.addEventListener('click', async(event)=>{
     window.location.href = "index.html";
 })
 
-document.addEventListener('DOMContentLoaded', async () =>{
+
+ok.addEventListener('click', async () =>{
     console.log("In async");
   try {
-    const response = await fetch('http://localhost:3000/books/all');
-   // console.log("blah blah:",response)
-    const data = await response.json();
-    //console.log("Pura Data:", data);
-    tableBody.innerHTML = '';
-    data.forEach(item => {
-        console.log("Printing item:", item);
-      const row = document.createElement('tr');
-      row.innerHTML =       
-      `
-        <td>${item.title}</td>
-        <td>${item.author}</td>
-        <td>${item.genre}</td>
-        <td>${item.price}</td>
-        <td>${item.stock}</td>
-      `;
-      
-      console.log(row);
-      tableBody.appendChild(row);
-    });
+    const query=document.querySelector('#query').value
+    if(query>0)
+    {
+        console.log("queries to show :",query);
+        const response = await fetch('http://localhost:3000/books?query='+query);
+      // console.log("blah blah:",response)
+        const data = await response.json();
+        const book=data.booksData
+        //console.log("Pura Data:", data);
+        tableBody.innerHTML = '';
+        book.forEach(item => {
+            console.log("Printing item:", item);
+          const row = document.createElement('tr');
+          row.innerHTML =       
+          `
+            <td>${item.title}</td>
+            <td>${item.author}</td>
+            <td>${item.genre}</td>
+            <td>${item.price}</td>
+            <td>${item.stock}</td>
+          `;
+          
+          console.log(row);
+          tableBody.appendChild(row);
+        });
+      }
+      else{
+        console.log("Negative Query entered")
+        alert("Invalid Query")
+      }
   } catch (err) {
     console.error("In catch of book data:" ,err);
     Sentry.captureException(Error, "Not fetch Book data")

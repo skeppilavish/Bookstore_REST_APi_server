@@ -6,6 +6,9 @@
 </head>
 <body>
 <h1>Book Listing</h1>
+<input type="number" placeholder="query" id="query" min="0">
+<button id="ok">ok</button>
+<br> <br>
 <table id="bookTable" cellpadding = "10px"  border="2pxsolid black">
 <thead>
   <tr>
@@ -20,7 +23,7 @@
       <!-- Table rows will be added dynamically by JavaScript -->
     </tbody>
   </table>
-  <input type="button" value="Clear Token" style="float: right;">
+  <input id="logout" type="button" value="Clear Token" style="float: right;">
 
 
   <script src="js/dashboard.js"></script>

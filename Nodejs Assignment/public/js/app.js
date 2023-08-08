@@ -1,6 +1,6 @@
 // Add sentry
 
-const Sentry= require("Sentry")
+//const Sentry= require("Sentry")
 
 // main.js
 const loginForm = document.getElementById('loginForm');

@@ -12,25 +12,34 @@ const got = require('got');
 const { json } = require('body-parser');
 
 
-const Sentry= require('../middleware/sentry.js')
+const Sentry= require('../middleware/sentry.js');
+const { log } = require('winston');
 
 // GET route for gettting all books in the bookstore(Admin and Customer)
 router.get('/books', async (req,res)=>{
-    const limit =2;
-    let page = Number(req.query.page) - 1 || 0;
-    try{
-        const pageCount = Math.floor((await Book.countDocuments({}) + 1)/limit);
-        if(pageCount < page + 1 )
+    try{  
+        var limit =req.query.query;
+        if(limit>await Book.countDocuments({}))
         {
-            throw new Error("Total number of pages :" + pageCount + ". Take page lower than that")
+            limit=await Book.countDocuments({})
         }
-        const booksData = await Book.find().sort({title: 'asc'}).limit(limit).skip(limit*page);
+        console.log(limit,"hgcv",Book.countDocuments({}))
+        // let page = Number(req.query.page) - 1 || 0;
+        
+        //const pageCount = Math.floor((await Book.countDocuments({}) + 1)/limit);
+        // if(pageCount < page + 1 )
+        // {
+        //     throw new Error("Total number of pages :" + pageCount + ". Take page lower than that")
+        // }
+        //console.log( req.query,"hjgjf", req.query.page);
+        const booksData = await Book.find().sort({title: 'asc'}).limit(req.query.query)
+        console.log(booksData.length)
         if(!booksData.length)
         {
             logger.wwarn("No book is there")
             res.send("No books data found.");
         }
-        res.send({booksData, "Page Number": page + 1, "Total Pages": pageCount});
+        res.send({booksData, "Query": limit });
     }
     catch(error){
         Sentry.captureException(error)
