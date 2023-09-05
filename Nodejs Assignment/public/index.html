@@ -1,28 +1,39 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
 <!-- tile on browser page -->
 <title>Login</title>
+
 <body>
     <!-- header -->
     <h1>Login Page of "Book-Store"</h1>
     <p><em>....By Lavish</em></p>
-    <form id="loginForm">
-        Required id and password for login
-        <br>
-        <label for="email">Email id:</label>
-        <input type="email" id="email" placeholder="abc@gmail.com" required autocomplete="username">
-        <br>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" placeholder="password" required autocomplete="current-password">
-        <br><br>
-        <button type="button" id="lavish">Login</button>
-    </form>
-    <form id="clarity">
-        <button type="button" id="ankit">clear token</button>
+
+    <form id="loginForm" align="center">
+        <div>
+            <h3>Required id and password for login</h3>
+            <img src="./images/profile.png" alt="Avatar" class="avatar">
+            <br>
+            <label for="email">Email id:</label>
+            <input type="email" id="email" placeholder="abc@gmail.com" required autocomplete="username">
+            <br>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="password" required autocomplete="current-password">
+            <br><br>
+            <button type="button" id="lavish">Login</button>
+            <button type="button" id="ankit">clear token</button>
+            <button type="button" id="register">Register</button>
+        </div>
     </form>
 
-    <script src="js/app.js" ></script>
+
+    <script src="js/app.js"></script>
 
 
 </body>

@@ -36,13 +36,13 @@ router.get('/books', async (req,res)=>{
         console.log(booksData.length)
         if(!booksData.length)
         {
-            logger.wwarn("No book is there")
+            logger.warn("No book is there")
             res.send("No books data found.");
         }
         res.send({booksData, "Query": limit });
     }
     catch(error){
-        Sentry.captureException(error)
+    Sentry.captureException(error)
         res.status(404).send("Invalid Request => " + error.message);
     }
 })

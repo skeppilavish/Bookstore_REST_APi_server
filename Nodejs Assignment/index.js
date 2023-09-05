@@ -3,8 +3,7 @@ require('./mongoose') //Acquiring database through mongoose
 const userR=require('./routers/users') //acquiring router for users
 const bookR=require('./routers/books') //acquiring router for books
 const path = require('path')
-const bodyParser= require ('body-parser');
-const cors = require ("cors");
+
  
 
 const app=express(); // initializing express app

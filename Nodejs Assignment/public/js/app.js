@@ -4,13 +4,19 @@
 
 // main.js
 const loginForm = document.getElementById('loginForm');
-const clarity= document.getElementById('clarity')
 
 // to remove token
-clarity.addEventListener('click', async(event)=>{
+ankit.addEventListener('click', async(event)=>{
     event.preventDefault(); // avoid refresh
     localStorage.clear();
     console.log("Done remove")
+})
+
+// const register= document.getElementById('register');
+register.addEventListener('click',async(event)=>{
+    event.preventDefault(); // avoid refresh
+    window.location.href = "register.html";
+    console.log("To register page")
 })
 
 //Event listener for form submission
@@ -54,7 +60,7 @@ console.log("start")
          // Check response is ok or not
         if (response.ok) {
             //const s = data.token.length();
-            console.log("in ifif:" ,typeof(data.token));
+            console.log(typeof(data.token));
             const token = data.token[data.token.length-1].token;
             console.log("hello token is here: ", token)
             localStorage.setItem('access_token', token);
